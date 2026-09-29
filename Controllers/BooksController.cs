@@ -40,8 +40,12 @@ namespace WebAPI_simple.Controllers
         [HttpPost("add-book")]
         public IActionResult AddBook([FromBody] AddBookRequestDTO addBookRequestDTO)
         {
-            var bookAdd = _bookRepository.AddBook(addBookRequestDTO);
-            return Ok(bookAdd);
+            if (ModelState.IsValid)
+            {
+                var bookAdd = _bookRepository.AddBook(addBookRequestDTO);
+                return Ok(bookAdd);
+            }
+            else return BadRequest(ModelState);
         }
 
         [HttpPut("update-book-by-id/{id}")]
