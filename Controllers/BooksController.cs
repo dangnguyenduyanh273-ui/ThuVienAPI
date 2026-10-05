@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebAPI_simple.Data;
 using WebAPI_simple.Models.DTO;
 using WebAPI_simple.Repositories;
+using System.Text.Json;
 
 namespace WebAPI_simple.Controllers
 {
@@ -13,10 +14,12 @@ namespace WebAPI_simple.Controllers
     {
         private readonly AppDbContext _dbContext;
         private readonly IBookRepository _bookRepository;
-        public BooksController(AppDbContext dbContext, IBookRepository bookRepository)
+        private readonly ILogger<BooksController> _logger;
+        public BooksController(AppDbContext dbContext, IBookRepository bookRepository, ILogger<BooksController> logger)
         {
             _dbContext = dbContext;
             _bookRepository = bookRepository;
+            _logger = logger;
         }
 
         [HttpGet("get-all-books")]
@@ -25,8 +28,12 @@ namespace WebAPI_simple.Controllers
           [FromQuery] string? sortBy, [FromQuery] bool isAscending,
           [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 100)
         {
+            _logger.LogInformation("GetAll Book Action method was invoked");
+            _logger.LogWarning("This is a warning log");
+            _logger.LogError("This is a error log");
             // su dung reposity pattern
             var allBooks = _bookRepository.GetAllBooks(filterOn, filterQuery, sortBy, isAscending, pageNumber, pageSize);
+            _logger.LogInformation($"Finished GetAllBook request with data {JsonSerializer.Serialize(allBooks)}");
             return Ok(allBooks);
         }
 
